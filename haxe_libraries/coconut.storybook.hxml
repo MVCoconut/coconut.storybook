@@ -1,0 +1,4 @@
+-lib coconut.ui
+-cp ${SCOPE_DIR}/./src
+-D coconut.storybook=0.0.0
+--macro Sys.println("haxe_libraries/coconut.storybook.hxml:3: [Warning] Using dev version of library coconut.storybook")

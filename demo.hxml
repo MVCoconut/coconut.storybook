@@ -1,0 +1,6 @@
+-cp tests
+-main Demo
+-js bin/demo.js
+
+-lib coconut.storybook
+-lib coconut.react-dom
