@@ -13,6 +13,17 @@ class Storybook {
 			switch Context.typeof(expr) {
 				case TInst(_.get() => {pack: pack, name: cname, meta: meta, fields: _.get() => fields}, _):
 					
+					function subst(e:Expr)
+						return switch e {
+							case macro this.$field: 
+								macro @:pos(e.pos) @:privateAccess inst.$field;
+							case macro this: 
+								macro @:pos(e.pos) @:privateAccess inst;
+							default:
+								e.map(subst);
+						}
+						
+				
 					var stories = [for(field in fields) {
 						var fname = field.name;
 						switch field.meta.extract(':story') {
@@ -21,7 +32,7 @@ class Storybook {
 							case [{params: []}]:
 								macro api.add($v{fname}, @:privateAccess inst.$fname);
 							case [{params: [name]}]:
-								macro api.add($name, @:privateAccess inst.$fname);
+								macro api.add(${subst(name)}, @:privateAccess inst.$fname);
 							case [{pos: pos}]:
 								pos.error('Expected zero or one parameter');
 							case v:
@@ -33,7 +44,7 @@ class Storybook {
 						case []:
 							macro $v{pack.concat([cname]).join('/')}
 						case [{params: [v]}]:
-							v;
+							subst(v);
 						case [{pos: pos}]:
 							pos.error('Expected exactly one parameter');
 						case v:
@@ -48,6 +59,8 @@ class Storybook {
 					expr.pos.error('Type not supported');
 			}
 		}
+		
+		
 		
 		return macro {
 			var storiesOf = js.Lib.require("@storybook/react").storiesOf;

@@ -45,3 +45,13 @@ module.exports = {
 	// ....
 };
 ```
+
+### Note
+
+In `@:title` and `@:story`, you can use explicit `this` to reference fields of the class instance. e.g. 
+```haxe
+@:title('Button: ' + this.variant)
+class Button {
+	public final variant:String;
+}
+```
