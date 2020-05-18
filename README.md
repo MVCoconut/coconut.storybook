@@ -16,7 +16,7 @@ static function main() {
 	Storybook.add(new Button(), new AnotherComponent());
 }
 
-@:title('foo/Button') // optional title, default to full path of the class, separated by a slash ("/")
+@:title('foo/Button') // optional title, default to full path of the class separated by a slash ("/")
 class Button extends Component {
 	@:story // functions tagged with @:story will be added to storybook
 	function withText() '
