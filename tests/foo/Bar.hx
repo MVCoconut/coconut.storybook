@@ -8,7 +8,7 @@ class Bar extends Component {
 		<button>Hello Button</button>
 	';
 	
-	@:story
+	@:story('with emoji')
 	function withEmoji() '
 		<button>
 			<span role="img" aria-label="so cool">

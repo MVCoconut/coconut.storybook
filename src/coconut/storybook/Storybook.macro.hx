@@ -11,19 +11,37 @@ class Storybook {
 		
 		for(expr in exprs) {
 			switch Context.typeof(expr) {
-				case TInst(_.get() => {pack: pack, name: cname, fields: _.get() => fields}, _):
+				case TInst(_.get() => {pack: pack, name: cname, meta: meta, fields: _.get() => fields}, _):
 					
 					var stories = [for(field in fields) {
-						if(field.meta.has(':story')) {
-							var fname = field.name;
-							macro api.add($v{fname}, @:privateAccess inst.$fname);
+						var fname = field.name;
+						switch field.meta.extract(':story') {
+							case []:
+								continue;
+							case [{params: []}]:
+								macro api.add($v{fname}, @:privateAccess inst.$fname);
+							case [{params: [name]}]:
+								macro api.add($name, @:privateAccess inst.$fname);
+							case [{pos: pos}]:
+								pos.error('Expected zero or one parameter');
+							case v:
+								v[0].pos.error('Multiple @:story metadata is not supported');
 						}
 					}];
 					
-					var path = pack.concat([cname]).join('/');
+					var title = switch meta.extract(':title') {
+						case []:
+							macro $v{pack.concat([cname]).join('/')}
+						case [{params: [v]}]:
+							v;
+						case [{pos: pos}]:
+							pos.error('Expected exactly one parameter');
+						case v:
+							v[0].pos.error('Multiple @:title metadata is not supported');
+					}
 					ret.push(macro {
 						var inst = $expr;
-						var api = js.Lib.require('@storybook/react').storiesOf($v{path}, untyped module);
+						var api = storiesOf($title, untyped module);
 						$b{stories}
 					});
 				case _:
@@ -31,6 +49,9 @@ class Storybook {
 			}
 		}
 		
-		return macro $b{ret};
+		return macro {
+			var storiesOf = js.Lib.require("@storybook/react").storiesOf;
+			$b{ret}
+		};
 	}
 }
