@@ -9,13 +9,13 @@ class Demo {
 	}
 }
 
-
 @:parameter({note: 'component note'}, foo = 1)
 @:parameter(bar = 2)
+@:decorator(Knobs.withKnobs)
 class Button extends Component {
 	@:story
 	function withText() '
-		<button>Hello Button</button>
+		<button disabled=${Knobs.boolean('Disabled', false)}>${Knobs.text('Text', 'Hello Button')}</button>
 	';
 	
 	@:story
@@ -32,4 +32,11 @@ class Button extends Component {
 	function wrap(f:()->ReactSingleFragment) '
 		<div style=${{backgroundColor: 'black'}}>${f()}</div>
 	';
+}
+
+@:jsRequire('@storybook/addon-knobs')
+extern class Knobs {
+	static function withKnobs(f:()->ReactSingleFragment):ReactSingleFragment;
+	static function boolean(name:String, value:Bool):Bool;
+	static function text(name:String, value:String):String;
 }
