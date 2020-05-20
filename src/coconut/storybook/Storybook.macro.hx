@@ -43,13 +43,24 @@ class Storybook {
 								v[0].pos.error('Multiple @:story metadata is not supported');
 						}
 
+						var parameters = [
+							for (parameter in field.meta.extract(':parameter'))
+								for (e in parameter.params)
+									subst(e)
+						];
+						
 						var decorators = [
 							for (decorator in field.meta.extract(':decorator'))
 								for (e in decorator.params)
 									subst(e)
 						];
-
-						stories.push(macro api.add($name, @:privateAccess inst.$fname, {decorators: $a{decorators}}));
+						
+						var merges = parameters.copy();
+						if(decorators.length > 0) merges.push(macro {decorators: $a{decorators}});
+						
+						var args = [name, macro @:privateAccess inst.$fname];
+						if(merges.length > 0) args.push(macro tink.Anon.merge($a{merges}));
+						stories.push(macro api.add($a{args}));
 					}
 
 					var title = switch meta.extract(':title') {
@@ -62,11 +73,19 @@ class Storybook {
 							v[0].pos.error('Multiple @:title metadata is not supported');
 					}
 
-					var setup = [macro var api = storiesOf($title, untyped module)];
+					var setup = [macro var api:Dynamic = storiesOf($title, untyped module)];
 
 					for (decorator in meta.extract(':decorator'))
 						for (e in decorator.params)
 							setup.push(macro api.addDecorator(${subst(e)}));
+
+					var parameters = [
+						for (parameter in meta.extract(':parameter'))
+							for (e in parameter.params)
+								subst(e)
+					];
+					if(parameters.length > 0)
+						setup.push(macro api.addParameter(tink.Anon.merge($a{parameters})));
 
 					ret.push(macro {
 						var inst = $expr;

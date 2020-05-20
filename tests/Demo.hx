@@ -9,6 +9,9 @@ class Demo {
 	}
 }
 
+
+@:parameter({note: 'component note'}, foo = 1)
+@:parameter(bar = 2)
 class Button extends Component {
 	@:story
 	function withText() '
@@ -17,6 +20,7 @@ class Button extends Component {
 	
 	@:story
 	@:decorator(this.wrap)
+	@:parameter({note: 'story note'})
 	function withEmoji() '
 		<button>
 			<span role="img" aria-label="so cool">

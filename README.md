@@ -24,7 +24,8 @@ class Button extends Component {
 	';
 	
 	@:story('with emoji') // custom story name
-	@:decorator(this.wrap) // decorators, can also be used at class-level
+	@:decorator(this.wrap) // decorators
+	@:parameter({note: 'component note'}, foo = 1) // parameters, expressions will be forwarded to `tink.Anon.merge`
 	function withEmoji() '
 		<button>
 			<span role="img" aria-label="so cool">
@@ -53,7 +54,9 @@ module.exports = {
 
 ### Note
 
-In `@:title` and `@:story`, you can use explicit `this` to reference fields of the class instance. e.g. 
+`@:decorator` and `@:parameter` are supported at both component (class) and story (method) level.
+
+In all the metadata, you can use explicit `this` to reference fields of the class instance. e.g. 
 ```haxe
 @:title('Button: ' + this.variant)
 class Button {
