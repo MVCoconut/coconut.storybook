@@ -24,12 +24,17 @@ class Button extends Component {
 	';
 	
 	@:story('with emoji') // custom story name
+	@:decorator(this.wrap) // decorators, can also be used at class-level
 	function withEmoji() '
 		<button>
 			<span role="img" aria-label="so cool">
 				😀 😎 👍 💯
 			</span>
 		</button>
+	';
+	
+	function wrap(f:()->ReactSingleFragment) '
+		<div style=${{backgroundColor: 'black'}}>${f()}</div>
 	';
 }
 

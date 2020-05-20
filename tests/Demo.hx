@@ -1,6 +1,7 @@
 package;
 
 import coconut.storybook.*;
+import react.ReactComponent;
 
 class Demo {
 	static function main() {
@@ -15,11 +16,16 @@ class Button extends Component {
 	';
 	
 	@:story
+	@:decorator(this.wrap)
 	function withEmoji() '
 		<button>
 			<span role="img" aria-label="so cool">
 				😀 😎 👍 💯
 			</span>
 		</button>
+	';
+	
+	function wrap(f:()->ReactSingleFragment) '
+		<div style=${{backgroundColor: 'black'}}>${f()}</div>
 	';
 }
