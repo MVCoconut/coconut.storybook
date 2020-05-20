@@ -85,7 +85,7 @@ class Storybook {
 								subst(e)
 					];
 					if(parameters.length > 0)
-						setup.push(macro api.addParameter(tink.Anon.merge($a{parameters})));
+						setup.push(macro api.addParameters(tink.Anon.merge($a{parameters})));
 
 					ret.push(macro {
 						var inst = $expr;
