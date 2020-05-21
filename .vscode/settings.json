@@ -1,3 +1,6 @@
 {
-	"haxe.enableCompilationServer": false
+	"haxe.enableCompilationServer": false,
+	"[haxe]": {
+		"editor.formatOnSave": true
+	}
 }

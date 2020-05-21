@@ -13,6 +13,7 @@ class Demo {
 @:parameter(bar = 2)
 @:decorator(Knobs.withKnobs)
 class Button extends Component {
+	// @formatter:off
 	@:story
 	function withText() '
 		<button disabled=${Knobs.boolean('Disabled', false)}>${Knobs.text('Text', 'Hello Button')}</button>
@@ -20,7 +21,8 @@ class Button extends Component {
 	
 	@:story
 	@:decorator(this.wrap)
-	@:parameter({note: 'story note'})
+	@:parameter({note: 'story note'}, foo = 1)
+	@:parameter(bar = 2)
 	function withEmoji() '
 		<button>
 			<span role="img" aria-label="so cool">
@@ -32,11 +34,12 @@ class Button extends Component {
 	function wrap(f:()->RenderResult) '
 		<div style=${{backgroundColor: 'black'}}>${f()}</div>
 	';
+	// @formatter:on
 }
 
 @:jsRequire('@storybook/addon-knobs')
 extern class Knobs {
-	static function withKnobs(f:()->RenderResult):RenderResult;
+	static function withKnobs(f:() -> RenderResult):RenderResult;
 	static function boolean(name:String, value:Bool):Bool;
 	static function text(name:String, value:String):String;
 }

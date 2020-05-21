@@ -48,18 +48,20 @@ class Storybook {
 								for (e in parameter.params)
 									subst(e)
 						];
-						
+
 						var decorators = [
 							for (decorator in field.meta.extract(':decorator'))
 								for (e in decorator.params)
-									subst(e)
+									macro @:pos(e.pos) (${subst(e)} : coconut.storybook.Decorator)
 						];
-						
+
 						var merges = parameters.copy();
-						if(decorators.length > 0) merges.push(macro {decorators: $a{decorators}});
-						
+						if (decorators.length > 0)
+							merges.push(macro {decorators: $a{decorators}});
+
 						var args = [name, macro @:privateAccess inst.$fname];
-						if(merges.length > 0) args.push(macro tink.Anon.merge($a{merges}));
+						if (merges.length > 0)
+							args.push(macro(tink.Anon.merge($a{merges}) : Dynamic));
 						stories.push(macro api.add($a{args}));
 					}
 
@@ -73,7 +75,9 @@ class Storybook {
 							v[0].pos.error('Multiple @:title metadata is not supported');
 					}
 
-					var setup = [macro var api:Dynamic = storiesOf($title, untyped module)];
+					var setup = [
+						macro var api:coconut.storybook.Storybook.Api = storiesOf($title, untyped module)
+					];
 
 					for (decorator in meta.extract(':decorator'))
 						for (e in decorator.params)
@@ -84,8 +88,9 @@ class Storybook {
 							for (e in parameter.params)
 								subst(e)
 					];
-					if(parameters.length > 0)
-						setup.push(macro api.addParameters(tink.Anon.merge($a{parameters})));
+
+					if (parameters.length > 0)
+						setup.push(macro api.addParameters((tink.Anon.merge($a{parameters}) : Dynamic)));
 
 					ret.push(macro {
 						var inst = $expr;
@@ -102,15 +107,14 @@ class Storybook {
 			$b{ret}
 		};
 	}
-	
+
 	public static macro function getDefaultFramework():Expr {
-		return
-			if(Context.defined('coconut.vdom')) {
-				macro '@storybook/coconut';
-			} else if(Context.defined('coconut.react-dom')) {
-				macro '@storybook/react';
-			} else {
-				macro $v{Context.definedValue('storybook.framework')}
-			}
+		return if (Context.defined('coconut.vdom')) {
+			macro '@storybook/coconut';
+		} else if (Context.defined('coconut.react-dom')) {
+			macro '@storybook/react';
+		} else {
+			macro $v{Context.definedValue('storybook.framework')}
+		}
 	}
 }

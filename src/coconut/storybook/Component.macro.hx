@@ -7,11 +7,11 @@ using tink.MacroApi;
 class Component {
 	public static function build() {
 		var builder = new ClassBuilder();
-		if(!builder.target.meta.has(':tink'))
+		if (!builder.target.meta.has(':tink'))
 			builder.target.meta.add(':tink', [], Context.currentPos());
 		return null;
 	}
-	
+
 	macro function hxx(ethis, e)
 		return macro coconut.Ui.hxx($e);
 }
