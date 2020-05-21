@@ -1,7 +1,7 @@
 package;
 
 import coconut.storybook.*;
-import react.ReactComponent;
+import coconut.ui.*;
 
 class Demo {
 	static function main() {
@@ -29,14 +29,14 @@ class Button extends Component {
 		</button>
 	';
 	
-	function wrap(f:()->ReactSingleFragment) '
+	function wrap(f:()->RenderResult) '
 		<div style=${{backgroundColor: 'black'}}>${f()}</div>
 	';
 }
 
 @:jsRequire('@storybook/addon-knobs')
 extern class Knobs {
-	static function withKnobs(f:()->ReactSingleFragment):ReactSingleFragment;
+	static function withKnobs(f:()->RenderResult):RenderResult;
 	static function boolean(name:String, value:Bool):Bool;
 	static function text(name:String, value:String):String;
 }

@@ -98,8 +98,19 @@ class Storybook {
 		}
 
 		return macro {
-			var storiesOf = js.Lib.require("@storybook/react").storiesOf;
+			var storiesOf = js.Lib.require(coconut.storybook.Storybook.getDefaultFramework()).storiesOf;
 			$b{ret}
 		};
+	}
+	
+	public static macro function getDefaultFramework():Expr {
+		return
+			if(Context.defined('coconut.vdom')) {
+				macro '@storybook/coconut';
+			} else if(Context.defined('coconut.react-dom')) {
+				macro '@storybook/react';
+			} else {
+				macro $v{Context.definedValue('storybook.framework')}
+			}
 	}
 }
