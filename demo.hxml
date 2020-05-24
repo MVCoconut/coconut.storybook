@@ -3,4 +3,4 @@
 -js bin/demo.js
 
 -lib coconut.storybook
--lib coconut.react-dom
+-lib coconut.vdom

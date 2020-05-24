@@ -110,7 +110,7 @@ class Storybook {
 
 	public static macro function getDefaultFramework():Expr {
 		return if (Context.defined('coconut.vdom')) {
-			macro '@storybook/coconut';
+			macro 'storybook-coconut'; // '@storybook/coconut';
 		} else if (Context.defined('coconut.react-dom')) {
 			macro '@storybook/react';
 		} else {

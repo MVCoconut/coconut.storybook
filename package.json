@@ -6,9 +6,9 @@
     "@storybook/addon-knobs": "^5.3.18",
     "@storybook/addon-links": "^5.3.18",
     "@storybook/addons": "^5.3.18",
-    "@storybook/react": "^5.3.18",
     "babel-loader": "^8.1.0",
-    "dts2hx": "^0.9.1"
+    "dts2hx": "^0.9.1",
+    "storybook-coconut": "^0.0.6"
   },
   "scripts": {
     "storybook": "start-storybook -p 6006",
