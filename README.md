@@ -6,8 +6,8 @@ Storybook: https://storybook.js.org/
 
 First, setup Storybook according to the [official guide](https://storybook.js.org/docs/guides/guide-react/).
 
-Note1: For coconut.vdom support, use the npm package "storybook-coconut" instead of "@storybook/react".
-Note2: Multiple coconut target is not supported, that's limitation of storybook's architecture.
+> Note1: For coconut.vdom support, use the npm package "storybook-coconut" instead of "@storybook/react".  
+> Note2: Multiple coconut target is not supported, that's limitation of storybook's architecture.
 
 Then...
 
