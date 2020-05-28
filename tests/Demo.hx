@@ -5,7 +5,12 @@ import coconut.ui.*;
 
 class Demo {
 	static function main() {
-		Storybook.add(new Button(), new foo.Bar());
+		Storybook.add([
+			// @formatter:off
+			new Button(),
+			new foo.Bar(),
+			// @formatter:on
+		]);
 	}
 }
 
@@ -31,6 +36,14 @@ class Button extends Component {
 		</button>
 	';
 	
+	@:story
+	@:state(var value:Int = 0)
+	function withState() '
+		<button onclick=${value += 1}>
+			Clicked ${value} time(s)
+		</button>
+	';
+	
 	function wrap(f:()->RenderResult) '
 		<div style=${{backgroundColor: 'black'}}>${f()}</div>
 	';
@@ -42,4 +55,11 @@ extern class Knobs {
 	static function withKnobs(f:() -> RenderResult):RenderResult;
 	static function boolean(name:String, value:Bool):Bool;
 	static function text(name:String, value:String):String;
+}
+
+class Isolated extends View {
+	@:attribute var children:Children;
+
+	function render()
+		'<>${...children}</>';
 }

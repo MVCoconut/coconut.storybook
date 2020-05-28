@@ -7,6 +7,12 @@ using tink.MacroApi;
 
 class Storybook {
 	public static macro function add(exprs:Array<Expr>):Expr {
+		switch exprs {
+			case [{expr: EArrayDecl(values)}]:
+				exprs = values;
+			case _:
+		}
+
 		var ret = [];
 
 		for (expr in exprs) {

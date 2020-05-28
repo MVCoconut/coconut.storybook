@@ -1,14 +1,20 @@
 package coconut.storybook;
 
 import haxe.macro.Context;
+import haxe.macro.Expr;
 
 using tink.MacroApi;
 
 class Component {
 	public static function build() {
 		var builder = new ClassBuilder();
+
 		if (!builder.target.meta.has(':tink'))
 			builder.target.meta.add(':tink', [], Context.currentPos());
+
+		if (!builder.target.meta.has(':storybook'))
+			builder.target.meta.add(':storybook', [], Context.currentPos());
+
 		return null;
 	}
 

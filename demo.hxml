@@ -4,3 +4,5 @@
 
 -lib coconut.storybook
 -lib coconut.vdom
+
+-D analyzer-optimize
