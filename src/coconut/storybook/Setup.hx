@@ -17,7 +17,7 @@ class Setup {
 			for (field in builder)
 				switch [field.kind, field.metaNamed(':story'), field.metaNamed(':state')] {
 					case [FFun(func), stories, v] if (stories.length > 0):
-						// wrap with Isolated
+						// wrap with Isolated, so changes will trigger re-render
 						function subst(e:Expr)
 							return switch e {
 								case macro return $ret:

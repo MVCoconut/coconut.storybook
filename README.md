@@ -37,6 +37,14 @@ class Button extends Component {
 		</button>
 	';
 	
+	@:story
+	@:state(var value:Int = 0) // add state to a story
+	function withState() '
+		<button onclick=${value += 1}>
+			Clicked ${value} time(s)
+		</button>
+	';
+	
 	function wrap(f:()->ReactSingleFragment) '
 		<div style=${{backgroundColor: 'black'}}>${f()}</div>
 	';
