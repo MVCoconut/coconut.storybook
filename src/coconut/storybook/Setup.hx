@@ -27,6 +27,8 @@ class Setup {
 							}
 						func.expr = func.expr.map(subst);
 
+						var init = [];
+
 						// add states
 						for (states in v)
 							for (state in states.params)
@@ -42,17 +44,15 @@ class Setup {
 											var alias = getAlias(name);
 											var ct = v.type;
 
-											var original = func.expr;
-											func.expr = macro {
-												var $name = new tink.state.State<$ct>(${v.expr});
-												var $alias = $i{name};
-												${func.expr}
-											}
+											init.push(macro var $name = new tink.state.State<$ct>(${v.expr}));
+											init.push(macro var $alias = $i{name});
 										}
 
 									case _:
 										state.pos.error('Only supports EVars expressions');
 								}
+
+						func.expr = (macro $b{init}).concat(func.expr);
 
 					case _:
 						// skip
