@@ -75,6 +75,6 @@ private class Foo extends coconut.ui.View {
 	@:controlled var count:Int;
 
 	// @formatter:off
-	function render() '<div onclick=${count++}>Controlled: $count</div>';
+	function render() '<button onclick=${count++}>Controlled: $count</button>';
 	// @formatter:on
 }
