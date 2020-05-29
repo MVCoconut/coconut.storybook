@@ -20,8 +20,9 @@ class Setup {
 						// wrap with Isolated, so changes will trigger re-render
 						function subst(e:Expr)
 							return switch e {
-								case macro return $ret:
-									macro return coconut.ui.Isolated.fromHxx({}, {children: $ret});
+								case macro return hxx($v{(hxx : String)}):
+									hxx = '<coconut.ui.Isolated>$hxx</coconut.ui.Isolated>';
+									macro return hxx($v{hxx});
 								case e:
 									e;
 							}
