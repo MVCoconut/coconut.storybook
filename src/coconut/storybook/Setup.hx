@@ -22,7 +22,7 @@ class Setup {
 							return switch e {
 								case macro return hxx($v{(hxx : String)}):
 									hxx = '<coconut.ui.Isolated>$hxx</coconut.ui.Isolated>';
-									macro return hxx($v{hxx});
+									macro @:pos(e.pos) return hxx($v{hxx});
 								case e:
 									e;
 							}
@@ -45,8 +45,8 @@ class Setup {
 											var alias = getAlias(name);
 											var ct = v.type;
 
-											init.push(macro var $name = new tink.state.State<$ct>(${v.expr}));
-											init.push(macro var $alias = $i{name});
+											init.push(macro @:pos(v.expr.pos) var $name = new tink.state.State<$ct>(${v.expr}));
+											init.push(macro @:pos(v.expr.pos) var $alias = $i{name});
 										}
 
 									case _:
