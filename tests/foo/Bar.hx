@@ -7,7 +7,13 @@ class Bar extends Component {
 	function withText() '
 		<button>Hello Button</button>
 	';
-	
+
+	@:story
+	@:state(var value:Int = 0)
+	function withControlled() '
+		<Foo count=$value />
+	';
+
 	@:story('with emoji')
 	function withEmoji() '
 		<button>
@@ -15,5 +21,14 @@ class Bar extends Component {
 				😀 😎 👍 💯
 			</span>
 		</button>
+	';
+}
+
+private class Foo extends coconut.ui.View {
+	@:controlled var count:Int;
+
+	function render() '
+		<div>
+		</div>
 	';
 }
