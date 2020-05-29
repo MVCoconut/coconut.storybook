@@ -39,9 +39,23 @@ class Button extends Component {
 	@:story
 	@:state(var value:Int = 0)
 	function withState() '
-		<button onclick=${value += 1}>
+		<button onclick=${value++}>
 			Clicked ${value} time(s)
 		</button>
+	';
+	
+	@:story
+	@:state(var complex:{final x:Int;} = {x: 1})
+	function withComplexState() '
+		<button onclick=${complex = {x: complex.x + 1}}>
+			Clicked ${complex.x} time(s)
+		</button>
+	';
+
+	@:story
+	@:state(var value:Int = 0)
+	function withControlled() '
+		<Foo count=$value />
 	';
 	
 	function wrap(f:()->RenderResult) '
@@ -57,9 +71,10 @@ extern class Knobs {
 	static function text(name:String, value:String):String;
 }
 
-class Isolated extends View {
-	@:attribute var children:Children;
+private class Foo extends coconut.ui.View {
+	@:controlled var count:Int;
 
-	function render()
-		'<>${...children}</>';
+	// @formatter:off
+	function render() '<div onclick=${count++}>Controlled: $count</div>';
+	// @formatter:on
 }

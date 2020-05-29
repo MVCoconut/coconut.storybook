@@ -23,7 +23,8 @@ class Component {
 
 	static function unwrapState(e)
 		return switch Context.getExpectedType() {
-			case null: e;
+			case null:
+				e;
 			case Context.unify(_, Context.getType('tink.state.Observable')) => true:
 				e;
 			default:

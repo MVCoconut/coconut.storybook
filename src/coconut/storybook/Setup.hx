@@ -76,17 +76,33 @@ class Setup {
 					}
 				}
 
-				switch e.expr {
-					case EConst(CIdent(name)) if (!isAlias(name)):
+				switch e {
+					// reads
+					case macro $i{name} if (!isAlias(name)):
 						transform(name, e, macro @:pos(e.pos) coconut.storybook.Component.unwrapState($i{getAlias(name)}));
 
-					case EBinop(OpAssign, macro $i{name}, rhs) if (!isAlias(name)):
-						transform(name, e, macro $i{getAlias(name)}.set($rhs));
+					case macro $i{name}.$field if (!isAlias(name)):
+						transform(name, e, macro @:pos(e.pos) $i{getAlias(name)}.value.$field);
 
-					case EBinop(OpAssignOp(binop), macro $i{name}, rhs) if (!isAlias(name)):
-						var rhs = EBinop(binop, macro $i{getAlias(name)}.value, rhs).at(e.pos);
-						transform(name, e, macro $i{getAlias(name)}.set($rhs));
+					// writes
+					case macro $i{name} = $rhs if (!isAlias(name)):
+						var alias = macro $i{getAlias(name)};
+						transform(name, e, macro $alias.set($rhs));
 
+					case macro $i{name} ++if (!isAlias(name)):
+						var alias = macro $i{getAlias(name)};
+						transform(name, e, macro $alias.set($alias.value + 1));
+
+					case macro $i{name} --if (!isAlias(name)):
+						var alias = macro $i{getAlias(name)};
+						transform(name, e, macro $alias.set($alias.value - 1));
+
+					case {expr: EBinop(OpAssignOp(binop), macro $i{name}, rhs)} if (!isAlias(name)):
+						var alias = macro $i{getAlias(name)};
+						var rhs = EBinop(binop, macro $alias.value, rhs).at(e.pos);
+						transform(name, e, macro $alias.set($rhs));
+
+					// not interested
 					case _:
 						e;
 				}
