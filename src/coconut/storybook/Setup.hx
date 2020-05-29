@@ -84,6 +84,9 @@ class Setup {
 					case macro $i{name}.$field if (!isAlias(name)):
 						transform(name, e, macro @:pos(e.pos) $i{getAlias(name)}.value.$field);
 
+					case macro !$i{name} if (!isAlias(name)):
+						transform(name, e, macro @:pos(e.pos) !$i{getAlias(name)}.value);
+
 					// writes
 					case macro $i{name} = $rhs if (!isAlias(name)):
 						var alias = macro $i{getAlias(name)};
