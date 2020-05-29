@@ -19,5 +19,5 @@ class Component {
 	}
 
 	macro function hxx(ethis, e)
-		return macro coconut.Ui.hxx($e);
+		return macro @:pos(e.pos) coconut.Ui.hxx($e);
 }

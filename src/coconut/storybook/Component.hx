@@ -4,5 +4,5 @@ package coconut.storybook;
 class Component {
 	public function new() {}
 
-	macro function hxx(ethis, e);
+	macro function hxx(e);
 }
