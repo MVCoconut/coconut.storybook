@@ -45,7 +45,7 @@ class Button extends Component {
 	';
 	
 	@:story
-	@:state(var complex:{final x:Int;} = {x: 1})
+	@:state(var complex:{final x:Int;} = {x: 0})
 	function withComplexState() '
 		<button onclick=${complex = {x: complex.x + 1}}>
 			Clicked ${complex.x} time(s)
