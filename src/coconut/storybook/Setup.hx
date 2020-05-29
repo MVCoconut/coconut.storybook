@@ -77,7 +77,7 @@ class Setup {
 
 				switch e.expr {
 					case EConst(CIdent(name)) if (!isAlias(name)):
-						transform(name, e, macro $i{getAlias(name)}.value);
+						transform(name, e, macro @:pos(e.pos) coconut.storybook.Component.unwrapState($i{getAlias(name)}));
 
 					case EBinop(OpAssign, macro $i{name}, rhs) if (!isAlias(name)):
 						transform(name, e, macro $i{getAlias(name)}.set($rhs));
