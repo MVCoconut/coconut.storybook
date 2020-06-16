@@ -78,6 +78,9 @@ class Setup {
 
 				switch e {
 					// reads
+					case macro @:state $i{name} if (!isAlias(name)):
+						transform(name, e, macro @:pos(e.pos) $i{getAlias(name)}.value);
+
 					case macro $i{name} if (!isAlias(name)):
 						transform(name, e, macro @:pos(e.pos) coconut.storybook.Component.unwrapState($i{getAlias(name)}));
 
