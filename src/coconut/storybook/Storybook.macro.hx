@@ -1,6 +1,7 @@
 package coconut.storybook;
 
 import haxe.macro.Expr;
+import haxe.macro.Type;
 import haxe.macro.Context;
 
 using tink.MacroApi;
@@ -17,7 +18,7 @@ class Storybook {
 
 		for (expr in exprs) {
 			switch Context.typeof(expr) {
-				case TInst(_.get() => {
+				case TInst(_.get() => cls = {
 					pack: pack,
 					name: cname,
 					meta: meta,
@@ -85,12 +86,12 @@ class Storybook {
 						macro var api:coconut.storybook.Storybook.Api = storiesOf($title, untyped module)
 					];
 
-					for (decorator in meta.extract(':decorator'))
+					for (decorator in getMetaRecursive(cls, ':decorator'))
 						for (e in decorator.params)
 							setup.push(macro api.addDecorator(${subst(e)}));
 
 					var parameters = [
-						for (parameter in meta.extract(':parameter'))
+						for (parameter in getMetaRecursive(cls, ':parameter'))
 							for (e in parameter.params)
 								subst(e)
 					];
@@ -112,6 +113,16 @@ class Storybook {
 			var storiesOf = js.Lib.require(coconut.storybook.Storybook.getDefaultFramework()).storiesOf;
 			$b{ret}
 		};
+	}
+	
+	static function getMetaRecursive(c:ClassType, name:String) {
+		var decorators = c.meta.extract(name);
+		switch c.superClass {
+			case null:
+			case sc:
+				decorators = decorators.concat(getMetaRecursive(sc.t.get(), name));
+		}
+		return decorators;
 	}
 
 	public static macro function getDefaultFramework():Expr {
