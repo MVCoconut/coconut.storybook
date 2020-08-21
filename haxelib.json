@@ -9,6 +9,7 @@
   "releasenote": "initial release",
   "version": "0.0.0",
   "dependencies": {
-    "coconut.ui": ""
+    "coconut.ui": "",
+    "tink_lang": ""
   }
 }
