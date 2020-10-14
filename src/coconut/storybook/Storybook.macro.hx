@@ -4,7 +4,9 @@ import haxe.macro.Expr;
 import haxe.macro.Type;
 import haxe.macro.Context;
 
+using tink.CoreApi;
 using tink.MacroApi;
+using Lambda;
 
 class Storybook {
 	public static macro function add(exprs:Array<Expr>):Expr {
@@ -75,15 +77,42 @@ class Storybook {
 									switch argsType.reduce() {
 										case TAnonymous(_.get() => anon):
 											final args = [];
-											final argTypes = [];
+											final argTypes:Array<Named<Array<Expr>>> = [];
 											final argsObj = EObjectDecl(args); // type inference
-											final argTypesObj = EObjectDecl(argTypes); // type inference
 
 											for (f in anon.fields) {
 												inline function addArg(e)
 													args.push({field: f.name, expr: e});
-												inline function addArgType(e)
-													argTypes.push({field: f.name, expr: e});
+												inline function addArgType(e) {
+													switch argTypes.find(v -> v.name == f.name) {
+														case null:
+															argTypes.push(new Named(f.name, [e]));
+														case entry:
+															entry.value.push(e);
+													}
+												}
+
+												switch f.meta.extract(':name') {
+													case []:
+													// skip
+													case [{params: [e]}]:
+														addArgType(macro {name: $e});
+													case [v]:
+														v.pos.error('@:name meta should have exactly one parameter');
+													case m:
+														m[0].pos.error('Multiple @:name meta is not supported');
+												}
+
+												switch f.meta.extract(':description') {
+													case []:
+													// skip
+													case [{params: [e]}]:
+														addArgType(macro {description: $e});
+													case [v]:
+														v.pos.error('@:description meta should have exactly one parameter');
+													case m:
+														m[0].pos.error('Multiple @:description meta is not supported');
+												}
 
 												switch f.meta.extract(':default') {
 													case []:
@@ -91,6 +120,7 @@ class Storybook {
 													case [{params: [e]}]:
 														final ct = f.type.toComplex();
 														addArg(macro @:pos(e.pos) ($e : $ct));
+														addArgType(macro {defaultValue: $e});
 													case [v]:
 														v.pos.error('@:default meta should have exactly one parameter');
 													case m:
@@ -145,7 +175,12 @@ class Storybook {
 												merges.push(macro {
 													__isArgsStory: true,
 													args: ${argsObj.at(field.pos)},
-													argTypes: ${argTypesObj.at(field.pos)},
+													argTypes: ${
+														EObjectDecl([
+															for (entry in argTypes)
+																{field: entry.name, expr: macro tink.Anon.merge($a{entry.value})}
+														]).at(field.pos)
+													},
 												});
 											}
 										case t:
@@ -203,8 +238,9 @@ class Storybook {
 		}
 
 		return macro {
-			var storiesOf = js.Lib.require(coconut.storybook.Storybook.getDefaultFramework()).storiesOf;
-
+			final lib = js.Lib.require(coconut.storybook.Storybook.getDefaultFramework());
+			lib.addParameters({docs: {source: {type: 'code'}}}); // disable dynamic source code generation, otherwise the react-element-to-string operation will choke on serialization of AutoObservables
+			final storiesOf = lib.storiesOf;
 			$b{ret}
 		};
 	}

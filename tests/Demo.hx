@@ -17,10 +17,10 @@ class Demo {
 }
 
 typedef Args = {
-	@:default('Foo') final text:String;
+	@:name('Text') @:description('My Text') @:default('Foo') final text:String;
 	@:default('#f00') @:control('color') final color:String;
 	@:default(1.2) final number:Float;
-	@:default(1) final sarray:Array<String>;
+	@:default(['a', 'b', 'c']) final sarray:Array<String>;
 	@:default([2.1, 3.2, 4.3]) final narray:Array<Float>;
 }
 
