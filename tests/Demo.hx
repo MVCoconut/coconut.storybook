@@ -8,10 +8,35 @@ class Demo {
 		Storybook.add([
 			// @formatter:off
 			new Button(),
+			new Controls(),
 			new foo.Bar(),
 			// @formatter:on
 		]);
 	}
+}
+
+typedef Args = {
+	@:default('Foo') final text:String;
+	@:default('#f00') @:control('color') final color:String;
+	@:default(1.2) final number:Float;
+	@:default(['a', 'b', 'c']) final sarray:Array<String>;
+	@:default([2.1, 3.2, 4.3]) final narray:Array<Float>;
+}
+
+class Controls extends Component {
+	// @formatter:off
+	@:story
+	function assorted(args:Args) '
+		<div>
+			<p>Text: ${args.text}</p>
+			<p>Color: <span style=${{display: 'inline-block', width: '20px', height: '20px', backgroundColor: args.color}}/></p>
+			<p>Number: ${args.number}</p>
+			<p>String Array: ${haxe.Json.stringify(args.sarray)}</p>
+			<p>Number Array: ${haxe.Json.stringify(args.narray)}</p>
+		</div>
+	';
+	
+	// @formatter:on
 }
 
 @:parameter({note: 'component note'}, foo = 1)

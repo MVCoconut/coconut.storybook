@@ -1,14 +1,15 @@
 {
   "dependencies": {},
   "devDependencies": {
-    "@babel/core": "^7.9.6",
-    "@storybook/addon-actions": "^5.3.18",
-    "@storybook/addon-knobs": "^5.3.18",
-    "@storybook/addon-links": "^5.3.18",
-    "@storybook/addons": "^5.3.18",
+    "@babel/core": "^7.11.4",
+    "@storybook/addon-actions": "^6.0.16",
+    "@storybook/addon-controls": "^6.0.26",
+    "@storybook/addon-knobs": "^6.0.16",
+    "@storybook/addon-links": "^6.0.16",
+    "@storybook/addons": "^6.0.16",
+    "@storybook/react": "^6.0.26",
     "babel-loader": "^8.1.0",
-    "dts2hx": "^0.9.1",
-    "storybook-coconut": "^0.0.6"
+    "dts2hx": "^0.9.1"
   },
   "scripts": {
     "storybook": "start-storybook -p 6006",

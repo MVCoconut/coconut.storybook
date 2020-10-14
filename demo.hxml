@@ -3,6 +3,7 @@
 -js bin/demo.js
 
 -lib coconut.storybook
--lib coconut.vdom
+# -lib coconut.vdom
+-lib coconut.react-dom
 
 -D analyzer-optimize

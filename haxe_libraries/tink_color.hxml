@@ -1,0 +1,3 @@
+-D tink_color=1.0.0
+# @install: lix --silent download "haxelib:/tink_color#1.0.0" into tink_color/1.0.0/haxelib
+-cp ${HAXE_LIBCACHE}/tink_color/1.0.0/haxelib/src

@@ -66,6 +66,84 @@ class Storybook {
 						if (decorators.length > 0)
 							merges.push(macro {decorators: $a{decorators}});
 
+						// storybook args: https://storybook.js.org/docs/react/writing-stories/args
+						(function addArgs(type:Type) {
+							switch type {
+								case TFun([], _):
+								case TFun(v, _):
+									final argsType = v[0].t; // first argument the storybook-provided "args"
+									final argsCt = argsType.toComplex();
+									switch argsType.reduce() {
+										case TAnonymous(_.get() => anon):
+											final args = [];
+											final argTypes = [];
+											final argsObj = EObjectDecl(args); // type inference
+											final argTypesObj = EObjectDecl(argTypes); // type inference
+
+											for (f in anon.fields) {
+												inline function addArg(e)
+													args.push({field: f.name, expr: e});
+												inline function addArgType(e)
+													argTypes.push({field: f.name, expr: e});
+
+												addArg(switch f.meta.extract(':default') {
+													case []:
+														macro null;
+													case [{params: [e]}]:
+														e;
+													case [v]:
+														v.pos.error('@:default meta should have exactly one parameter');
+													case m:
+														m[0].pos.error('Multiple @:default meta is not supported');
+												});
+
+												// TODO: add more argType fields: https://storybook.js.org/docs/react/api/argtypes
+												switch f.meta.extract(':control') {
+													case [] | [{params: []}]:
+														// infer control type from haxe type
+														switch f.type {
+															case _.getID() => 'String':
+																addArgType(macro {control: {type: 'text'}});
+															case _.getID() => 'Bool':
+																addArgType(macro {control: {type: 'boolean'}});
+															case _.getID() => 'Int' | 'Float':
+																addArgType(macro {control: {type: 'number'}});
+															case TInst(_.get() => {pack: [], name: 'Array'}, [_.getID() => 'String']):
+																addArgType(macro {control: {type: 'array'}});
+															case _:
+																addArgType(macro {control: {type: 'object'}});
+														}
+													case [{params: [e = {expr: EConst(CString(v))}]}]:
+														// treat string literal as control type
+														addArgType(macro {control: {type: $e}});
+													case [{params: [e]}]:
+														// anything else is passed as-is
+														addArgType(macro {control: $e});
+													case [v]:
+														v.pos.error('@:control meta should have at most one parameter');
+													case m:
+														m[0].pos.error('Multiple @:control meta is not supported');
+												}
+											}
+
+											if (args.length > 0 || argTypes.length > 0) {
+												merges.push(macro {
+													__isArgsStory: true,
+													args: (${argsObj.at(field.pos)} : $argsCt), // type check to make sure correctness of default values
+													argTypes: ${argTypesObj.at(field.pos)},
+												});
+											}
+										case t:
+											trace(t);
+									}
+
+								case TLazy(f):
+									addArgs(f());
+								case t:
+									field.pos.error('@:story is only applicable to function but got (${t})');
+							}
+						})(field.type);
+
 						var args = [name, macro @:privateAccess inst.$fname];
 						if (merges.length > 0)
 							args.push(macro(tink.Anon.merge($a{merges}) : Dynamic));
@@ -111,10 +189,11 @@ class Storybook {
 
 		return macro {
 			var storiesOf = js.Lib.require(coconut.storybook.Storybook.getDefaultFramework()).storiesOf;
+
 			$b{ret}
 		};
 	}
-	
+
 	static function getMetaRecursive(c:ClassType, name:String) {
 		var decorators = c.meta.extract(name);
 		switch c.superClass {
