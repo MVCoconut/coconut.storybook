@@ -12,6 +12,6 @@ class Storybook {
 extern class Api {
 	function addDecorator(f:Decorator):Api;
 	function addParameters(v:{}):Api;
-	// @:overload(function(name:String, render:() -> RenderResult):Api {})
+	@:overload(function<Args>(name:String, render:Args->RenderResult, ?params:{}):Api {})
 	function add(name:String, render:() -> RenderResult, ?params:{}):Api;
 }
