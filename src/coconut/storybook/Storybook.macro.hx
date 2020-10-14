@@ -72,7 +72,6 @@ class Storybook {
 								case TFun([], _):
 								case TFun(v, _):
 									final argsType = v[0].t; // first argument the storybook-provided "args"
-									final argsCt = argsType.toComplex();
 									switch argsType.reduce() {
 										case TAnonymous(_.get() => anon):
 											final args = [];
@@ -86,16 +85,17 @@ class Storybook {
 												inline function addArgType(e)
 													argTypes.push({field: f.name, expr: e});
 
-												addArg(switch f.meta.extract(':default') {
+												switch f.meta.extract(':default') {
 													case []:
-														macro null;
+													// skip
 													case [{params: [e]}]:
-														e;
+														final ct = f.type.toComplex();
+														addArg(macro @:pos(e.pos) ($e : $ct));
 													case [v]:
 														v.pos.error('@:default meta should have exactly one parameter');
 													case m:
 														m[0].pos.error('Multiple @:default meta is not supported');
-												});
+												}
 
 												// TODO: add more argType fields: https://storybook.js.org/docs/react/api/argtypes
 												switch f.meta.extract(':control') {
@@ -110,6 +110,8 @@ class Storybook {
 																addArgType(macro {control: {type: 'number'}});
 															case TInst(_.get() => {pack: [], name: 'Array'}, [_.getID() => 'String']):
 																addArgType(macro {control: {type: 'array'}});
+															case TFun(_):
+															// skip
 															case _:
 																addArgType(macro {control: {type: 'object'}});
 														}
@@ -124,12 +126,25 @@ class Storybook {
 													case m:
 														m[0].pos.error('Multiple @:control meta is not supported');
 												}
+
+												switch f.meta.extract(':action') {
+													case []:
+													// skip
+													case [{params: []}]:
+														addArgType(macro {action: $v{f.name}});
+													case [{params: [e = {expr: EConst(CString(v))}]}]:
+														addArgType(macro {action: $e});
+													case [v]:
+														v.pos.error('@:action meta should have at most string literal parameter');
+													case m:
+														m[0].pos.error('Multiple @:action meta is not supported');
+												}
 											}
 
 											if (args.length > 0 || argTypes.length > 0) {
 												merges.push(macro {
 													__isArgsStory: true,
-													args: (${argsObj.at(field.pos)} : $argsCt), // type check to make sure correctness of default values
+													args: ${argsObj.at(field.pos)},
 													argTypes: ${argTypesObj.at(field.pos)},
 												});
 											}

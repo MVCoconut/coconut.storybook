@@ -9,6 +9,7 @@ class Demo {
 			// @formatter:off
 			new Button(),
 			new Controls(),
+			new Actions(),
 			new foo.Bar(),
 			// @formatter:on
 		]);
@@ -19,7 +20,7 @@ typedef Args = {
 	@:default('Foo') final text:String;
 	@:default('#f00') @:control('color') final color:String;
 	@:default(1.2) final number:Float;
-	@:default(['a', 'b', 'c']) final sarray:Array<String>;
+	@:default(1) final sarray:Array<String>;
 	@:default([2.1, 3.2, 4.3]) final narray:Array<Float>;
 }
 
@@ -35,7 +36,17 @@ class Controls extends Component {
 			<p>Number Array: ${haxe.Json.stringify(args.narray)}</p>
 		</div>
 	';
-	
+	// @formatter:on
+}
+
+class Actions extends Component {
+	// @formatter:off
+	@:story
+	function basic(args:{@:action final onClick:Void->Void;}) '
+		<div>
+			<button onclick=${args.onClick}>Click</button>
+		</div>
+	';
 	// @formatter:on
 }
 
