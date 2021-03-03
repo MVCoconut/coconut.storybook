@@ -36,6 +36,17 @@ class Controls extends Component {
 			<p>Number Array: ${haxe.Json.stringify(args.narray)}</p>
 		</div>
 	';
+	
+	@:story
+	@:state(var value:Int = 0)
+	function withState(args:Args) '
+		<div>
+			<p>Text: ${args.text}</p>
+			<button onclick=${value++}>
+				Clicked ${value} time(s)
+			</button>
+		</div>
+	';
 	// @formatter:on
 }
 

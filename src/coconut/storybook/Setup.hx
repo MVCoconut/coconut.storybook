@@ -16,7 +16,7 @@ class Setup {
 
 			for (field in builder)
 				switch [field.kind, field.metaNamed(':story'), field.metaNamed(':state')] {
-					case [FFun(func), stories, v] if (stories.length > 0):
+					case [FFun(func), stories, states] if (stories.length > 0):
 						// wrap with Isolated, so changes will trigger re-render
 						function subst(e:Expr)
 							return switch e {
@@ -31,7 +31,7 @@ class Setup {
 						var init = [];
 
 						// add states
-						for (states in v)
+						for (states in states)
 							for (state in states.params)
 								switch state.expr {
 									case EVars(vars):
