@@ -156,16 +156,26 @@ class Storybook {
 													case m:
 														m[0].pos.error('Multiple @:control meta is not supported');
 												}
+												
+												
+												function checkActionType() {
+													switch f.type {
+														case TFun(_, _.getID() => 'Void'): // ok
+														case _: f.pos.error('@:action field should be a void-returning function');
+													}
+												}
 
 												switch f.meta.extract(':action') {
 													case []:
 													// skip
 													case [{params: []}]:
+														checkActionType();
 														addArgType(macro {action: $v{f.name}});
 													case [{params: [e = {expr: EConst(CString(v))}]}]:
+														checkActionType();
 														addArgType(macro {action: $e});
 													case [v]:
-														v.pos.error('@:action meta should have at most string literal parameter');
+														v.pos.error('@:action meta should have at most one string literal parameter');
 													case m:
 														m[0].pos.error('Multiple @:action meta is not supported');
 												}
